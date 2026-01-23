@@ -1,0 +1,337 @@
+:root {
+  color-scheme: light;
+  --grass: #6da746;
+  --grass-dark: #4c7f35;
+  --stone: #9da3a8;
+  --stone-dark: #7c8287;
+  --gold: #e0c04d;
+  --gold-dark: #c9a634;
+  --dirt: #5f472a;
+  --ink: #1b2416;
+  --ink-soft: #3e4a3a;
+  --surface: #f4f1e8;
+  --shadow: 0 20px 40px rgba(30, 40, 22, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Roboto Mono", "Courier New", monospace;
+  color: var(--ink);
+  background:
+    linear-gradient(120deg, rgba(109, 167, 70, 0.18), rgba(224, 192, 77, 0.18)),
+    repeating-linear-gradient(
+      45deg,
+      rgba(157, 163, 168, 0.2) 0,
+      rgba(157, 163, 168, 0.2) 16px,
+      rgba(124, 130, 135, 0.2) 16px,
+      rgba(124, 130, 135, 0.2) 32px
+    ),
+    #f4f1e8;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+.app {
+  padding: 32px 6vw 48px;
+  display: grid;
+  gap: 56px;
+}
+
+.top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 3px solid var(--stone-dark);
+  box-shadow: var(--shadow);
+  padding: 16px 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 54px;
+  height: 54px;
+  image-rendering: pixelated;
+}
+
+.brand-title {
+  font-family: "Press Start 2P", "Trebuchet MS", sans-serif;
+  font-size: 1rem;
+  margin: 0 0 6px;
+}
+
+.brand-sub {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+router-link {
+  padding: 8px 14px;
+  border: 2px solid var(--stone-dark);
+  background: var(--surface);
+  text-decoration: none;
+  font-size: 0.85rem;
+  box-shadow: 4px 4px 0 rgba(30, 40, 22, 0.2);
+}
+
+router-link:hover {
+  background: var(--gold);
+}
+
+.content {
+  display: grid;
+  gap: 56px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+  align-items: center;
+}
+
+.hero-content h1 {
+  font-family: "Press Start 2P", "Trebuchet MS", sans-serif;
+  font-size: clamp(1.7rem, 2.6vw, 2.6rem);
+  margin: 16px 0;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.lede {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  max-width: 520px;
+}
+
+.cta-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.btn {
+  padding: 10px 18px;
+  border: 2px solid var(--stone-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: 4px 4px 0 rgba(30, 40, 22, 0.2);
+}
+
+.btn.primary {
+  background: var(--grass);
+}
+
+.btn.primary:hover {
+  background: var(--grass-dark);
+}
+
+.btn.ghost {
+  background: var(--gold);
+}
+
+.btn.ghost:hover {
+  background: var(--gold-dark);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #fffef9;
+  border: 3px solid var(--stone-dark);
+  padding: 12px 14px;
+  box-shadow: 4px 4px 0 rgba(30, 40, 22, 0.2);
+}
+
+.stat-number {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.stat-label {
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.hero-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: start;
+  background: var(--surface);
+  border: 3px solid var(--stone-dark);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.hero-logo {
+  width: 96px;
+  height: 96px;
+  image-rendering: pixelated;
+}
+
+.card-title {
+  font-family: "Press Start 2P", "Trebuchet MS", sans-serif;
+  font-size: 0.85rem;
+  margin: 0 0 12px;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: #fffef9;
+  padding: 12px;
+  border: 2px solid var(--stone-dark);
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+}
+
+.feature-grid article {
+  padding: 16px;
+  background: var(--surface);
+  border: 3px solid var(--stone-dark);
+  box-shadow: 6px 6px 0 rgba(30, 40, 22, 0.18);
+}
+
+.feature-grid h3 {
+  margin: 0 0 12px;
+  font-family: "Press Start 2P", "Trebuchet MS", sans-serif;
+  font-size: 0.85rem;
+}
+
+.feature-grid p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.playground {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+  align-items: center;
+  margin-top: 16px;
+  background: #dde6c6;
+  border: 3px solid var(--stone-dark);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.counter {
+  padding: 14px 18px;
+  border: 3px solid var(--stone-dark);
+  background: var(--grass);
+  font-family: "Press Start 2P", "Trebuchet MS", sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 rgba(30, 40, 22, 0.2);
+}
+
+.counter:hover {
+  background: var(--grass-dark);
+}
+
+.page-card {
+  background: var(--surface);
+  border: 3px solid var(--stone-dark);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.page-card h2 {
+  font-family: "Press Start 2P", "Trebuchet MS", sans-serif;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.route-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.route-card {
+  background: #fffef9;
+  border: 3px solid var(--stone-dark);
+  padding: 16px;
+  box-shadow: 6px 6px 0 rgba(30, 40, 22, 0.18);
+}
+
+.route-card h3 {
+  margin: 0 0 8px;
+  font-family: "Press Start 2P", "Trebuchet MS", sans-serif;
+  font-size: 0.9rem;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  background: var(--surface);
+  border: 3px solid var(--stone-dark);
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 720px) {
+  .app {
+    padding: 24px 6vw 40px;
+  }
+
+  .hero-card {
+    grid-template-columns: 1fr;
+  }
+
+  .nav {
+    width: 100%;
+  }
+}
