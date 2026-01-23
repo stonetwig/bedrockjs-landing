@@ -13,7 +13,7 @@ Then open `http://localhost:8000`.
 
 ## Project structure
 
-- `src/main.ts` - BedrockJS app shell and router setup.
+- `src/client.ts` - BedrockJS app shell and router setup.
 - `src/pages/` - Page components for routes.
 - `src/components/` - Reusable components.
 - `public/` - Static assets and styles.

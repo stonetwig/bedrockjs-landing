@@ -2,6 +2,6 @@
   "license": "MIT",
   "tasks": {
     "dev": "deno run --allow-read --allow-net src/server.ts",
-    "bundle": "deno bundle src/main.ts -o public/bundle.js --platform=browser"
+    "bundle": "deno bundle src/client.ts -o public/bundle.js --platform=browser"
   }
 }
