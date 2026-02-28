@@ -7,6 +7,7 @@ import {
 } from "jsr:@devera/bedrockjs@0.1.1";
 
 import "./components/demo-counter.ts";
+import "./components/cube-3d.ts";
 import "./pages/home.ts";
 import "./pages/docs.ts";
 import "./pages/routes.ts";
@@ -22,10 +23,9 @@ class AppRoot extends Component {
       <div class="app">
         <header class="top-bar">
           <div class="brand">
-            <img class="logo" src="/bedrockjs.png" alt="BedrockJS logo" />
             <div>
               <p class="brand-title">BedrockJS</p>
-              <p class="brand-sub">Deno-first framework for steady builds</p>
+              <p class="brand-sub">a javascript framework without the fuss</p>
             </div>
           </div>
           <nav class="nav">
@@ -40,7 +40,7 @@ class AppRoot extends Component {
         </main>
 
         <footer class="footer">
-          <p>Built with BedrockJS on Deno.</p>
+          <p>Built with BedrockJS.</p>
           <p>Licensed under MIT and sponsored by <a href="https://devera.se">Devera</a>.</p>
         </footer>
       </div>

@@ -25,7 +25,7 @@ class DocsPage extends Component {
     return html`
       <section class="page-card">
         <h2>Install BedrockJS</h2>
-        <p>Use JSR to add the framework to your Deno project.</p>
+        <p>Add the framework to your project via JSR.</p>
         <pre><code>deno add jsr:@devera/bedrockjs</code></pre>
       </section>
 
@@ -40,12 +40,12 @@ class DocsPage extends Component {
         <p>Reactive helpers keep UI aligned with state changes.</p>
         <pre><code>import { reactive, watch } from "jsr:@devera/bedrockjs@0.1.1";
 
-const state = reactive({ ore: 12 });
+const state = reactive({ count: 12 });
 const stop = watch(() => {
-  console.log("Ore count:", state.ore);
+  console.log("Count:", state.count);
 });
 
-state.ore += 1;</code></pre>
+state.count += 1;</code></pre>
       </section>
     `;
   }
