@@ -1,5 +1,25 @@
 import { Component, html } from "@rendly/bedrockjs";
 
+const GRID = 3; // 3x3x3 = 27 sub-cubes
+const SUB_SIZE = 60;
+const GAP = 4;
+const SPACING = SUB_SIZE + GAP;
+
+type Pos = readonly [number, number, number];
+
+const POSITIONS: Pos[] = (() => {
+  const out: Pos[] = [];
+  const offset = (GRID - 1) / 2;
+  for (let xi = 0; xi < GRID; xi++) {
+    for (let yi = 0; yi < GRID; yi++) {
+      for (let zi = 0; zi < GRID; zi++) {
+        out.push([xi - offset, yi - offset, zi - offset] as const);
+      }
+    }
+  }
+  return out;
+})();
+
 class Cube3D extends Component {
   static tag = "cube-3d";
 
@@ -11,8 +31,17 @@ class Cube3D extends Component {
   private lastX = 0;
   private lastY = 0;
   private cubeEl: HTMLElement | null = null;
+  private wrapperEl: HTMLElement | null = null;
+  private subcubes: HTMLElement[] = [];
   private rafId = 0;
   private _ready = false;
+
+  // Pointer-driven explosion state
+  private pointerX = -9999;
+  private pointerY = -9999;
+  private hoverTarget = 0; // 0 or 1
+  private hoverActive = 0; // smoothed
+  private rect: DOMRect | null = null;
 
   render() {
     if (!this._ready) {
@@ -24,48 +53,58 @@ class Cube3D extends Component {
       <div class="cube-wrapper">
         <div class="cube-scene">
           <div class="cube">
-            <div class="cube-face front">
-              <span class="face-icon">{ B }</span>
-              <span class="face-label">Bedrock</span>
-            </div>
-            <div class="cube-face back">
-              <span class="face-icon">&lt;/&gt;</span>
-              <span class="face-label">Components</span>
-            </div>
-            <div class="cube-face right">
-              <span class="face-icon">=&gt;</span>
-              <span class="face-label">Routes</span>
-            </div>
-            <div class="cube-face left">
-              <span class="face-icon">$..</span>
-              <span class="face-label">State</span>
-            </div>
-            <div class="cube-face top">
-              <span class="face-icon">fn()</span>
-              <span class="face-label">Reactive</span>
-            </div>
-            <div class="cube-face bottom">
-              <span class="face-icon">~/~</span>
-              <span class="face-label">Sync</span>
-            </div>
+            ${POSITIONS.map(
+              ([x, y, z]) => html`
+                <div
+                  class="subcube"
+                  data-x="${x}"
+                  data-y="${y}"
+                  data-z="${z}"
+                >
+                  <div class="sub-face front"></div>
+                  <div class="sub-face back"></div>
+                  <div class="sub-face right"></div>
+                  <div class="sub-face left"></div>
+                  <div class="sub-face top"></div>
+                  <div class="sub-face bottom"></div>
+                </div>
+              `,
+            )}
           </div>
         </div>
-        <p class="cube-hint">Drag to spin</p>
+        <p class="cube-hint">Hover to fragment · drag to spin</p>
       </div>
     `;
   }
 
   private init() {
     this.cubeEl = this.querySelector(".cube") as HTMLElement;
-    if (!this.cubeEl) return;
+    this.wrapperEl = this.querySelector(".cube-wrapper") as HTMLElement;
+    if (!this.cubeEl || !this.wrapperEl) return;
+
+    this.subcubes = Array.from(
+      this.cubeEl.querySelectorAll<HTMLElement>(".subcube"),
+    );
+
+    // Place each sub-cube at its base position so first frame isn't (0,0,0).
+    this.subcubes.forEach((el, i) => {
+      const [px, py, pz] = POSITIONS[i];
+      el.style.transform =
+        `translate3d(${px * SPACING}px, ${py * SPACING}px, ${pz * SPACING}px)`;
+    });
 
     this.addEventListener("mousedown", this.onMouseDown);
     this.addEventListener("touchstart", this.onTouchStart, { passive: false });
+    this.addEventListener("mouseenter", this.onMouseEnter);
+    this.addEventListener("mouseleave", this.onMouseLeave);
     window.addEventListener("mousemove", this.onMouseMove);
     window.addEventListener("touchmove", this.onTouchMove, { passive: false });
     window.addEventListener("mouseup", this.onPointerUp);
     window.addEventListener("touchend", this.onPointerUp);
+    window.addEventListener("scroll", this.invalidateRect, { passive: true });
+    window.addEventListener("resize", this.invalidateRect);
 
+    this.refreshRect();
     this.animate();
   }
 
@@ -75,9 +114,20 @@ class Cube3D extends Component {
     window.removeEventListener("touchmove", this.onTouchMove);
     window.removeEventListener("mouseup", this.onPointerUp);
     window.removeEventListener("touchend", this.onPointerUp);
+    window.removeEventListener("scroll", this.invalidateRect);
+    window.removeEventListener("resize", this.invalidateRect);
+  }
+
+  private invalidateRect = () => {
+    this.rect = null;
+  };
+
+  private refreshRect() {
+    if (this.wrapperEl) this.rect = this.wrapperEl.getBoundingClientRect();
   }
 
   private animate = () => {
+    // Spin physics
     if (!this.isDragging) {
       this.rotY += this.velY;
       this.rotX += this.velX;
@@ -90,10 +140,79 @@ class Cube3D extends Component {
     }
 
     if (this.cubeEl) {
-      this.cubeEl.style.transform = `rotateX(${this.rotX}deg) rotateY(${this.rotY}deg)`;
+      this.cubeEl.style.transform =
+        `rotateX(${this.rotX}deg) rotateY(${this.rotY}deg)`;
+    }
+
+    // Smooth hover activation
+    this.hoverActive += (this.hoverTarget - this.hoverActive) * 0.15;
+
+    // Sub-cube displacement
+    if (this.subcubes.length) {
+      if (!this.rect) this.refreshRect();
+      const rect = this.rect;
+      if (rect) {
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const rxRad = (this.rotX * Math.PI) / 180;
+        const ryRad = (this.rotY * Math.PI) / 180;
+        const cosX = Math.cos(rxRad);
+        const sinX = Math.sin(rxRad);
+        const cosY = Math.cos(ryRad);
+        const sinY = Math.sin(ryRad);
+
+        const RADIUS = 130;
+        const MAX_DISP = 70;
+
+        for (let i = 0; i < this.subcubes.length; i++) {
+          const [px, py, pz] = POSITIONS[i];
+          const lx = px * SPACING;
+          const ly = py * SPACING;
+          const lz = pz * SPACING;
+
+          // World = RotX * RotY * local (matches CSS `rotateX rotateY`)
+          const x1 = cosY * lx + sinY * lz;
+          const z1 = -sinY * lx + cosY * lz;
+          const y2 = cosX * ly - sinX * z1;
+
+          const screenX = centerX + x1;
+          const screenY = centerY + y2;
+
+          const dx = this.pointerX - screenX;
+          const dy = this.pointerY - screenY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          let factor = 0;
+          if (this.hoverActive > 0.01 && dist < RADIUS) {
+            const t = 1 - dist / RADIUS;
+            factor = t * t * this.hoverActive; // ease-out falloff
+          }
+
+          // Outward direction in local space (center cube stays put)
+          const len = Math.sqrt(px * px + py * py + pz * pz) || 1;
+          const ox = (px / len) * MAX_DISP * factor;
+          const oy = (py / len) * MAX_DISP * factor;
+          const oz = (pz / len) * MAX_DISP * factor;
+
+          this.subcubes[i].style.transform =
+            `translate3d(${lx + ox}px, ${ly + oy}px, ${lz + oz}px)`;
+        }
+      }
     }
 
     this.rafId = requestAnimationFrame(this.animate);
+  };
+
+  private onMouseEnter = () => {
+    this.hoverTarget = 1;
+    this.refreshRect();
+  };
+
+  private onMouseLeave = () => {
+    this.hoverTarget = 0;
+    this.pointerX = -9999;
+    this.pointerY = -9999;
   };
 
   private onMouseDown = (e: MouseEvent) => {
@@ -110,6 +229,9 @@ class Cube3D extends Component {
   };
 
   private onMouseMove = (e: MouseEvent) => {
+    this.pointerX = e.clientX;
+    this.pointerY = e.clientY;
+
     if (!this.isDragging) return;
     const dx = e.clientX - this.lastX;
     const dy = e.clientY - this.lastY;
@@ -140,3 +262,7 @@ class Cube3D extends Component {
 }
 
 Cube3D.register();
+
+// Touch SUB_SIZE so the unused-const linter (if any) stays quiet — it's also
+// referenced implicitly via the CSS variable wired up in styles.css.
+void SUB_SIZE;
