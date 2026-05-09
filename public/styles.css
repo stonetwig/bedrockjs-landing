@@ -213,7 +213,7 @@ router-link:hover {
   padding: 12px 24px;
   border-radius: var(--radius-sm);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-decoration: none;
   transition: all 0.25s;
   border: none;
