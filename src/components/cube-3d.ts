@@ -1,4 +1,4 @@
-import { Component, html } from "jsr:@devera/bedrockjs@0.1.1";
+import { Component, html } from "@rendly/bedrockjs";
 
 class Cube3D extends Component {
   static tag = "cube-3d";
@@ -45,8 +45,8 @@ class Cube3D extends Component {
               <span class="face-label">Reactive</span>
             </div>
             <div class="cube-face bottom">
-              <span class="face-icon">>>></span>
-              <span class="face-label">Runtime</span>
+              <span class="face-icon">~/~</span>
+              <span class="face-label">Sync</span>
             </div>
           </div>
         </div>

@@ -1,7 +1,15 @@
 {
   "license": "MIT",
+  "imports": {
+    "@rendly/bedrockjs": "jsr:@rendly/bedrockjs@^0.1.2",
+    "@rendly/bedrockjs/sync": "jsr:@rendly/bedrockjs@^0.1.2/sync",
+    "@rendly/bedrockjs/sync/server": "jsr:@rendly/bedrockjs@^0.1.2/sync/server",
+    "@std/http/file-server": "jsr:@std/http@^1.0.0/file-server",
+    "@std/path": "jsr:@std/path@^1.0.0"
+  },
   "tasks": {
-    "dev": "deno run --allow-read --allow-net src/server.ts",
-    "bundle": "deno bundle src/client.ts -o public/bundle.js --platform=browser"
+    "dev": "deno run --allow-read --allow-net --allow-env --allow-ffi --allow-write --unstable-kv src/server.ts",
+    "bundle": "deno bundle src/client.ts -o public/bundle.js --platform=browser",
+    "start": "deno run --allow-read --allow-net --allow-env --allow-ffi --allow-write --unstable-kv src/server.ts"
   }
 }

@@ -1,4 +1,4 @@
-import { Component, html } from "jsr:@devera/bedrockjs@0.1.1";
+import { Component, html } from "@rendly/bedrockjs";
 
 class DemoCounter extends Component {
   static tag = "demo-counter";

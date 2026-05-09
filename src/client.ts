@@ -4,13 +4,21 @@ import {
   RouterOutlet,
   createRouter,
   html,
-} from "jsr:@devera/bedrockjs@0.1.1";
+} from "@rendly/bedrockjs";
+
+// IMPORTANT: configureSync must run before any module that calls syncedModel.
+// ES imports are hoisted, so we import the sync config module first.
+import "./sync-config.ts";
 
 import "./components/demo-counter.ts";
 import "./components/cube-3d.ts";
 import "./pages/home.ts";
 import "./pages/docs.ts";
 import "./pages/routes.ts";
+import "./pages/examples.ts";
+import "./pages/examples-todo.ts";
+import "./pages/examples-counter.ts";
+import "./pages/examples-chat.ts";
 
 RouterLink.register();
 RouterOutlet.register();
@@ -25,13 +33,14 @@ class AppRoot extends Component {
           <div class="brand">
             <div>
               <p class="brand-title">BedrockJS</p>
-              <p class="brand-sub">a javascript framework without the fuss</p>
+              <p class="brand-sub">a deno-first framework with sync built in</p>
             </div>
           </div>
           <nav class="nav">
             <router-link to="/">Home</router-link>
             <router-link to="/docs">Docs</router-link>
             <router-link to="/routes">Routes</router-link>
+            <router-link to="/examples">Examples</router-link>
           </nav>
         </header>
 
@@ -41,7 +50,7 @@ class AppRoot extends Component {
 
         <footer class="footer">
           <p>Built with BedrockJS.</p>
-          <p>Licensed under MIT and sponsored by <a href="https://devera.se">Devera</a>.</p>
+          <p>Licensed under MIT and maintained by <a href="https://jsr.io/@rendly">Rendly</a>.</p>
         </footer>
       </div>
     `;
@@ -55,5 +64,9 @@ createRouter({
     { path: "/", component: "home-page" },
     { path: "/docs", component: "docs-page" },
     { path: "/routes", component: "routes-page" },
+    { path: "/examples", component: "examples-page" },
+    { path: "/examples/todo", component: "examples-todo" },
+    { path: "/examples/counter", component: "examples-counter" },
+    { path: "/examples/chat", component: "examples-chat" },
   ],
 });

@@ -1,10 +1,56 @@
-import { serveDir } from "https://deno.land/std@0.223.0/http/file_server.ts";
-import { extname } from "https://deno.land/std@0.223.0/path/mod.ts";
+import { serveDir } from "@std/http/file-server";
+import { extname } from "@std/path";
+import {
+  createSyncServer,
+  denoKvAdapter,
+} from "@rendly/bedrockjs/sync/server";
 
-const handler = (req: Request) => {
+// Sync server backed by Deno KV. With no path the adapter uses Deno's native
+// KV — runs locally with --unstable-kv and persists transparently on Deno
+// Deploy. Set DENO_KV_PATH=":memory:" or a file path to use the SQLite backend
+// (requires --allow-ffi).
+const kvPath = Deno.env.get("DENO_KV_PATH");
+const kv = await Deno.openKv(kvPath);
+
+const sync = await createSyncServer({
+  storage: denoKvAdapter({ kv }),
+  models: ["todo", "counter", "message"],
+  basePath: "/sync",
+  cors: true,
+});
+
+// The example demos are public and unauthenticated, so we wipe all sync data
+// every 15 minutes to keep spam and inappropriate content from sticking
+// around. Already-connected tabs keep their local IndexedDB copy until they
+// next reload, but anyone arriving fresh gets a clean slate.
+const CLEAR_INTERVAL_MS = 15 * 60 * 1000;
+const SYNC_KEY_PREFIX = ["bedrockjs"];
+
+async function clearSyncData() {
+  let count = 0;
+  const deletes: Promise<void>[] = [];
+  for await (const entry of kv.list({ prefix: SYNC_KEY_PREFIX })) {
+    deletes.push(kv.delete(entry.key));
+    count++;
+  }
+  await Promise.all(deletes);
+  if (count > 0) {
+    console.log(`[sync] cleared ${count} keys at ${new Date().toISOString()}`);
+  }
+}
+
+setInterval(() => {
+  clearSyncData().catch((err) => console.error("[sync] clear failed:", err));
+}, CLEAR_INTERVAL_MS);
+
+const handler = (req: Request): Response | Promise<Response> => {
   const url = new URL(req.url);
-  const hasExtension = extname(url.pathname) !== "";
 
+  if (url.pathname.startsWith("/sync/")) {
+    return sync(req);
+  }
+
+  const hasExtension = extname(url.pathname) !== "";
   if (url.pathname === "/" || !hasExtension) {
     url.pathname = "/index.html";
   }
@@ -16,5 +62,9 @@ const handler = (req: Request) => {
   });
 };
 
-Deno.serve({ port: 8000 }, handler);
-console.log("BedrockJS landing page running on http://localhost:8000");
+const port = Number(Deno.env.get("PORT") ?? "8000");
+Deno.serve({ port }, handler);
+console.log(`BedrockJS landing page running on http://localhost:${port}`);
+console.log(
+  `[sync] auto-clearing demo data every ${CLEAR_INTERVAL_MS / 60000} minutes`,
+);
