@@ -5,12 +5,11 @@ import {
   denoKvAdapter,
 } from "@rendly/bedrockjs/sync/server";
 
-// Sync server backed by Deno KV. With no path the adapter uses Deno's native
-// KV — runs locally with --unstable-kv and persists transparently on Deno
-// Deploy. Set DENO_KV_PATH=":memory:" or a file path to use the SQLite backend
-// (requires --allow-ffi).
+// Sync server backed by Deno KV. On Deno Deploy, Deno.openKv() is called with
+// no arguments to use the managed KV. Locally with DENO_KV_PATH set, it uses that
+// path (":memory:" or a file path; requires --allow-ffi --allow-write).
 const kvPath = Deno.env.get("DENO_KV_PATH");
-const kv = await Deno.openKv(kvPath);
+const kv = kvPath ? await Deno.openKv(kvPath) : await Deno.openKv();
 
 const sync = await createSyncServer({
   storage: denoKvAdapter({ kv }),
