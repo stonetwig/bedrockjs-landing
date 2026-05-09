@@ -1,5 +1,6 @@
 {
   "license": "MIT",
+  "unstable": ["kv"],
   "imports": {
     "@rendly/bedrockjs": "jsr:@rendly/bedrockjs@^0.1.2",
     "@rendly/bedrockjs/sync": "jsr:@rendly/bedrockjs@^0.1.2/sync",
