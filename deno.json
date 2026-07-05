@@ -2,9 +2,9 @@
   "license": "MIT",
   "unstable": ["kv"],
   "imports": {
-    "@rendly/bedrockjs": "jsr:@rendly/bedrockjs@^0.1.2",
-    "@rendly/bedrockjs/sync": "jsr:@rendly/bedrockjs@^0.1.2/sync",
-    "@rendly/bedrockjs/sync/server": "jsr:@rendly/bedrockjs@^0.1.2/sync/server",
+    "@rendly/bedrockjs": "jsr:@rendly/bedrockjs@^0.1.3",
+    "@rendly/bedrockjs/sync": "jsr:@rendly/bedrockjs@^0.1.3/sync",
+    "@rendly/bedrockjs/sync/server": "jsr:@rendly/bedrockjs@^0.1.3/sync/server",
     "@std/http/file-server": "jsr:@std/http@^1.0.0/file-server",
     "@std/path": "jsr:@std/path@^1.0.0"
   },

@@ -24,7 +24,7 @@ class HomePage extends Component {
           </div>
           <div class="stat-grid">
             <div class="stat-card">
-              <p class="stat-number">0.1.2</p>
+              <p class="stat-number">0.1.3</p>
               <p class="stat-label">Latest release</p>
             </div>
             <div class="stat-card">
