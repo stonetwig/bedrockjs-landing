@@ -1,9 +1,9 @@
 import { Component, html } from "@rendly/bedrockjs";
 
 class ExamplesPage extends Component {
-  static tag = "examples-page";
+  static override tag = "examples-page";
 
-  render() {
+  override render() {
     return html`
       <section class="examples-hero">
         <span class="eyebrow">Sync engine</span>

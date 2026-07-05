@@ -1,9 +1,9 @@
 import { Component, html } from "@rendly/bedrockjs";
 
 class HomePage extends Component {
-  static tag = "home-page";
+  static override tag = "home-page";
 
-  render() {
+  override render() {
     return html`
       <section class="hero">
         <div class="hero-content">
@@ -24,7 +24,7 @@ class HomePage extends Component {
           </div>
           <div class="stat-grid">
             <div class="stat-card">
-              <p class="stat-number">0.1.3</p>
+              <p class="stat-number">0.1.4</p>
               <p class="stat-label">Latest release</p>
             </div>
             <div class="stat-card">

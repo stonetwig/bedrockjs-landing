@@ -1,7 +1,14 @@
 import { Component, html, keyed } from "@rendly/bedrockjs";
 import { syncedModel } from "@rendly/bedrockjs/sync";
 
-const Todo = syncedModel("todo", {
+type TodoFields = {
+  title: string;
+  completed: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
+
+const Todo = syncedModel<TodoFields>("todo", {
   fields: {
     id: "string",
     title: "string",
@@ -12,9 +19,9 @@ const Todo = syncedModel("todo", {
 });
 
 class ExamplesTodo extends Component {
-  static tag = "examples-todo";
+  static override tag = "examples-todo";
 
-  static properties = {
+  static override properties = {
     draft: { type: String, default: "" },
   };
 
@@ -39,14 +46,13 @@ class ExamplesTodo extends Component {
     Todo.update(id, { completed: !completed, updatedAt: new Date() });
   };
 
-  remove = (id: string) => {
+  removeTodo = (id: string) => {
     Todo.delete(id);
   };
 
-  render() {
+  override render() {
     const items = Todo.all();
-    const remaining = items.filter((t: { completed: boolean }) => !t.completed)
-      .length;
+    const remaining = items.filter((t) => !t.completed).length;
 
     return html`
       <section class="demo-hero">
@@ -77,11 +83,7 @@ class ExamplesTodo extends Component {
           ? html`<p class="demo-empty">Nothing here yet. Add the first task.</p>`
           : html`
               <ul class="todo-list">
-                ${items.map((t: {
-                  id: string;
-                  title: string;
-                  completed: boolean;
-                }) =>
+                ${items.map((t) =>
                   keyed(
                     t.id,
                     html`
@@ -94,7 +96,7 @@ class ExamplesTodo extends Component {
                         <span class="todo-title">${t.title}</span>
                         <button
                           class="todo-delete"
-                          on-click=${() => this.remove(t.id)}
+                          on-click=${() => this.removeTodo(t.id)}
                           aria-label="Delete"
                         >×</button>
                       </li>

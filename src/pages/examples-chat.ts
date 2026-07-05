@@ -1,7 +1,13 @@
 import { Component, html, keyed } from "@rendly/bedrockjs";
 import { syncedModel } from "@rendly/bedrockjs/sync";
 
-const Message = syncedModel("message", {
+type MessageFields = {
+  text: string;
+  timestamp: string | Date;
+  clientId: string;
+};
+
+const Message = syncedModel<MessageFields>("message", {
   fields: {
     id: "string",
     text: "string",
@@ -18,12 +24,7 @@ function isMissingStoreError(error: unknown) {
 
 function readMessages() {
   try {
-    return Message.all() as Array<{
-      id: string;
-      text: string;
-      timestamp: string | Date;
-      clientId: string;
-    }>;
+    return Message.all();
   } catch (error) {
     if (isMissingStoreError(error)) return [];
     throw error;
@@ -31,9 +32,9 @@ function readMessages() {
 }
 
 class ExamplesChat extends Component {
-  static tag = "examples-chat";
+  static override tag = "examples-chat";
 
-  static properties = {
+  static override properties = {
     draft: { type: String, default: "" },
   };
 
@@ -60,11 +61,11 @@ class ExamplesChat extends Component {
     if (stream) stream.scrollTop = stream.scrollHeight;
   }
 
-  updated() {
+  override updated() {
     this.scrollToBottom();
   }
 
-  render() {
+  override render() {
     const messages = readMessages().slice().sort((a, b) =>
       new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );

@@ -21,7 +21,7 @@ const POSITIONS: Pos[] = (() => {
 })();
 
 class Cube3D extends Component {
-  static tag = "cube-3d";
+  static override tag = "cube-3d";
 
   private rotX = -20;
   private rotY = 30;
@@ -43,7 +43,7 @@ class Cube3D extends Component {
   private hoverActive = 0; // smoothed
   private rect: DOMRect | null = null;
 
-  render() {
+  override render() {
     if (!this._ready) {
       this._ready = true;
       requestAnimationFrame(() => this.init());
@@ -105,7 +105,7 @@ class Cube3D extends Component {
     window.addEventListener("resize", this.invalidateRect);
 
     this.refreshRect();
-    this.animate();
+    this.animateCube();
   }
 
   disconnectedCallback() {
@@ -126,7 +126,7 @@ class Cube3D extends Component {
     if (this.wrapperEl) this.rect = this.wrapperEl.getBoundingClientRect();
   }
 
-  private animate = () => {
+  private animateCube = () => {
     // Spin physics
     if (!this.isDragging) {
       this.rotY += this.velY;
@@ -201,7 +201,7 @@ class Cube3D extends Component {
       }
     }
 
-    this.rafId = requestAnimationFrame(this.animate);
+    this.rafId = requestAnimationFrame(this.animateCube);
   };
 
   private onMouseEnter = () => {

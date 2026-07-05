@@ -1,7 +1,12 @@
 import { Component, html } from "@rendly/bedrockjs";
 import { syncedModel } from "@rendly/bedrockjs/sync";
 
-const Counter = syncedModel("counter", {
+type CounterFields = {
+  value: number;
+  label: string;
+};
+
+const Counter = syncedModel<CounterFields>("counter", {
   fields: {
     id: "string",
     value: "number",
@@ -15,9 +20,7 @@ function isMissingStoreError(error: unknown) {
 
 function getMainCounter() {
   try {
-    return Counter.get("main") as
-      | { value: number; label: string }
-      | undefined;
+    return Counter.get("main");
   } catch (error) {
     if (isMissingStoreError(error)) return undefined;
     throw error;
@@ -40,10 +43,13 @@ async function ensureCounter() {
 }
 
 class ExamplesCounter extends Component {
-  static tag = "examples-counter";
+  static override tag = "examples-counter";
 
   connectedCallback() {
-    super.connectedCallback();
+    const connectedCallback = (Component.prototype as unknown as {
+      connectedCallback?: (this: ExamplesCounter) => void;
+    }).connectedCallback;
+    connectedCallback?.call(this);
     ensureCounter();
   }
 
@@ -67,7 +73,7 @@ class ExamplesCounter extends Component {
     Counter.update("main", { value: 0 });
   };
 
-  render() {
+  override render() {
     const counter = getMainCounter();
     const value = counter?.value ?? 0;
     const label = counter?.label ?? "Loading…";

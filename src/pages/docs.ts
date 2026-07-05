@@ -1,20 +1,20 @@
 import { Component, html } from "@rendly/bedrockjs";
 
 class DocsPage extends Component {
-  static tag = "docs-page";
+  static override tag = "docs-page";
 
-  render() {
+  override render() {
     const componentSnippet = [
       'import { Component, html } from "@rendly/bedrockjs";',
       "",
       "class WelcomePanel extends Component {",
-      '  static tag = "welcome-panel";',
+      '  static override tag = "welcome-panel";',
       "",
-      "  static properties = {",
+      "  static override properties = {",
       '    name: { type: String, default: "Explorer" }',
       "  };",
       "",
-      "  render() {",
+      "  override render() {",
       "    return html`<h3>Welcome, ${this.name}!</h3>`;",
       "  }",
       "}",

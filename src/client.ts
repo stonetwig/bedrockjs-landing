@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 import {
   Component,
   RouterLink,
@@ -24,9 +26,9 @@ RouterLink.register();
 RouterOutlet.register();
 
 class AppRoot extends Component {
-  static tag = "app-root";
+  static override tag = "app-root";
 
-  render() {
+  override render() {
     return html`
       <div class="app">
         <header class="top-bar">

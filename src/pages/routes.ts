@@ -1,9 +1,9 @@
 import { Component, html } from "@rendly/bedrockjs";
 
 class RoutesPage extends Component {
-  static tag = "routes-page";
+  static override tag = "routes-page";
 
-  render() {
+  override render() {
     return html`
       <section class="page-card">
         <h2>Router setup</h2>
